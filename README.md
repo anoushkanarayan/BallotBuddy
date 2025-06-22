@@ -1,65 +1,53 @@
 # BallotBuddy - Your Personal Election Guide
 
-BallotBuddy is a comprehensive web application that helps users understand their political landscape and make informed voting decisions. The app provides personalized guidance based on users' political views, personal circumstances, and location.
+BallotBuddy is a comprehensive web application designed to help users understand their political landscape and make informed voting decisions. By entering an address, users can access personalized information about their elected representatives, upcoming elections, and relevant legislation based on their unique political views and personal circumstances.
 
 ## Features
 
-### 🏠 Address-Based Representative Lookup
-- Find all your representatives from local to federal level
-- Clean, intuitive display of representative information
-- Contact details for each representative
+### 🏠 Address Input with Google Places Autocomplete
+-   **Smart Address Entry**: Start typing your address and get instant suggestions powered by the Google Places API.
+-   **Custom Styled UI**: A clean, responsive interface with a custom-styled, opaque autocomplete dropdown for a seamless user experience.
+-   **Find Your District**: Quickly and accurately find your political districts based on a verified address.
 
 ### 📊 Personalized Political Survey
-- **Political Views Assessment**: Slider-based questions on key political issues
-  - Abortion rights
-  - Tax policies
-  - Campaign finance
-  - Gun control
-  - Healthcare
-  - Environmental regulations
-
-- **Personal Circumstances**: Yes/No questions about your situation
-  - Housing status (Section 8)
-  - Employment type (government, small business)
-  - Income level
-  - Veteran status
-  - Student status
-  - Union membership
-  - Parental status
-
-- **Additional Details**: Open text area for personal political priorities
+-   **Political Views Assessment**: Fine-tune your political profile with slider-based questions on key issues like abortion rights, tax policies, and environmental regulations.
+-   **Personal Circumstances**: Select your relevant personal circumstances using simple checkboxes for topics like housing status, employment, and student status. This helps tailor the information to your specific situation.
 
 ### 🗳️ Election Helper
-- Upcoming elections and candidates
-- Personalized candidate recommendations
-- Alignment scores based on your survey responses
-- Detailed explanations of why candidates align with your views
+-   Discover upcoming elections and candidates in your district.
+-   Receive personalized candidate recommendations and alignment scores based on your survey responses.
+-   Read detailed explanations of why specific candidates may align with your views.
 
 ### 📋 Legislation Helper
-- Current bills up for vote
-- Personalized bill descriptions
-- Impact analysis based on your circumstances
-- Representatives' positions on key legislation
+-   Stay informed about current bills up for a vote.
+-   Get personalized descriptions of bills and understand their potential impact based on your circumstances.
+-   See your representatives' positions on key legislation.
+
+### 🏛️ Representative Information
+-   View a clear, intuitive display of all your elected officials, from the local to the federal level.
+-   Access contact details for each representative.
 
 ## Technology Stack
 
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Styling**: Custom CSS with modern design principles
-- **Data Storage**: LocalStorage for user preferences
-- **Future AI Integration**: AWS Bedrock/SageMaker for personalized content generation
+-   **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
+-   **APIs**: Google Places API for address autocomplete.
+-   **Styling**: Custom CSS with a responsive, mobile-first design.
+-   **Data Storage**: LocalStorage for persisting survey data and user preferences.
 
 ## File Structure
 
 ```
 BallotBuddy/
+├── .gitignore          # Specifies files for Git to ignore
 ├── index.html          # Main landing page (address input)
-├── index.js            # Landing page functionality
+├── index.js            # Landing page functionality & API loading
+├── my_api_keys.js      # Stores API keys (ignored by Git)
 ├── survey.html         # Political views survey
 ├── survey.js           # Survey logic and navigation
-├── results.html        # Representatives and helper tabs
+├── results.html        # Displays representatives and helper tabs
 ├── results.js          # Results page functionality
 ├── styles/
-│   ├── styles.css      # Main styles and landing page
+│   ├── styles.css      # Main styles for landing page
 │   ├── survey.css      # Survey page styles
 │   └── results.css     # Results page styles
 └── README.md           # This file
@@ -67,64 +55,34 @@ BallotBuddy/
 
 ## Getting Started
 
-1. **Clone or download** the project files
-2. **Open `index.html`** in a web browser
-3. **Enter your address** to get started
-4. **Complete the survey** to receive personalized guidance
-5. **Explore your representatives** and election/legislation helpers
+To run BallotBuddy locally, follow these steps:
 
-## User Flow
-
-1. **Address Input** → User enters their full address
-2. **Political Views Survey** → 6 slider questions on key issues
-3. **Circumstances Survey** → 8 yes/no questions about personal situation
-4. **Personal Details** → Open text area for additional priorities
-5. **Results Page** → Representatives overview with two tabs:
-   - **Election Helper**: Candidate recommendations
-   - **Legislation Helper**: Bill analysis
-
-## Future Enhancements
-
-### API Integrations
-- **Google Civic Information API**: Real representative data
-- **OpenStates API**: State-level legislation data
-- **Federal APIs**: Congressional data and voting records
-
-### AWS AI Integration
-- **Amazon Bedrock**: Generate personalized candidate descriptions
-- **Amazon SageMaker**: Analyze user preferences and generate recommendations
-- **Amazon Q**: Enhanced question-answering about political issues
-
-### Additional Features
-- Email notifications for upcoming elections
-- Social sharing of results
-- Export functionality for voting records
-- Mobile app version
-- Multi-language support
+1.  **Clone or download** the project files to your local machine.
+2.  **Create your API Key file**:
+    *   In the `BallotBuddy/` root directory, create a new file named `my_api_keys.js`.
+    *   Inside this file, add the following line, replacing `'YOUR_GOOGLE_API_KEY'` with your actual Google Places API key:
+        ```javascript
+        const GOOGLE_API_KEY = 'YOUR_GOOGLE_API_KEY';
+        ```
+    *   **Note**: The `.gitignore` file is already configured to prevent this file from being uploaded to GitHub.
+3.  **Open `index.html`** in a modern web browser (Chrome, Firefox, Safari, Edge).
+4.  **Enter your address** using the autocomplete search bar.
+5.  **Complete the survey** to receive personalized guidance.
+6.  **Explore your results** to see your representatives and use the Election and Legislation helpers.
 
 ## Design Principles
 
-- **Accessibility**: High contrast, readable fonts, keyboard navigation
-- **Responsive**: Works on desktop, tablet, and mobile devices
-- **User-Friendly**: Intuitive navigation and clear instructions
-- **Privacy-Focused**: Data stored locally, no external tracking
-
-## Browser Compatibility
-
-- Chrome (recommended)
-- Firefox
-- Safari
-- Edge
+-   **User-Friendly**: Intuitive navigation, clear instructions, and a clean interface.
+-   **Responsive**: The layout adapts seamlessly to desktop, tablet, and mobile devices.
+-   **Privacy-Focused**: User data is stored locally in the browser and is not sent to any external server. API keys are kept secure via `.gitignore`.
+-   **Accessibility**: Designed with high contrast, readable fonts, and keyboard-navigable elements.
 
 ## Contributing
 
-This is a personal project, but suggestions and improvements are welcome! Areas for contribution:
-
-- API integrations for real data
-- Enhanced AI-powered recommendations
-- Additional survey questions
-- Improved accessibility features
-- Mobile optimization
+This is a personal project, but suggestions and improvements are always welcome! Areas for contribution could include:
+-   Integrating with the Google Civic Information API or OpenStates API for real-time representative and legislative data.
+-   Enhancing the AI-powered recommendation logic.
+-   Adding more survey questions to create a more detailed user profile.
 
 ## License
 
