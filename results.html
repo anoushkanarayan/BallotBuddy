@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Representatives - BallotBuddy</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/results.css">
+</head>
+<body>
+    <div class="results-container">
+        <div class="main-content">
+            <!-- Left Side - Helper Section -->
+            <div class="helper-section">
+                <div class="tab-container">
+                    <button class="tab-button active" onclick="switchTab('election')">
+                        <span class="tab-icon">🗳️</span>
+                        Election Helper
+                    </button>
+                    <button class="tab-button" onclick="switchTab('legislation')">
+                        <span class="tab-icon">📋</span>
+                        Legislation Helper
+                    </button>
+                </div>
+
+                <!-- Election Helper Tab -->
+                <div class="tab-content active" id="electionTab">
+                    <div class="tab-header">
+                        <h2>Upcoming Elections & Candidates</h2>
+                        <p>Personalized recommendations based on your political views</p>
+                    </div>
+                    
+                    <div class="election-content">
+                        <div class="election-card">
+                            <div class="election-header">
+                                <h3>Presidential Election 2024</h3>
+                                <span class="election-date">November 5, 2024</span>
+                            </div>
+                            <div class="candidates">
+                                <div class="candidate">
+                                    <div class="candidate-info">
+                                        <h4>Joe Biden (D)</h4>
+                                        <p class="candidate-description" id="bidenDescription">
+                                            Based on your pro-choice stance and support for universal healthcare, this candidate aligns with your values on reproductive rights and healthcare access.
+                                        </p>
+                                    </div>
+                                    <div class="alignment-score">
+                                        <span class="score">85%</span>
+                                        <span class="label">Alignment</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="candidate">
+                                    <div class="candidate-info">
+                                        <h4>Donald Trump (R)</h4>
+                                        <p class="candidate-description" id="trumpDescription">
+                                            Given your support for lower taxes and small business interests, this candidate's economic policies may align with your financial priorities.
+                                        </p>
+                                    </div>
+                                    <div class="alignment-score">
+                                        <span class="score">45%</span>
+                                        <span class="label">Alignment</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="election-card">
+                            <div class="election-header">
+                                <h3>Local School Board Election</h3>
+                                <span class="election-date">March 15, 2024</span>
+                            </div>
+                            <div class="candidates">
+                                <div class="candidate">
+                                    <div class="candidate-info">
+                                        <h4>Sarah Johnson (Non-partisan)</h4>
+                                        <p class="candidate-description">
+                                            As a parent with children under 18, this candidate's focus on improving local schools directly impacts your family's future.
+                                        </p>
+                                    </div>
+                                    <div class="alignment-score">
+                                        <span class="score">92%</span>
+                                        <span class="label">Alignment</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legislation Helper Tab -->
+                <div class="tab-content" id="legislationTab">
+                    <div class="tab-header">
+                        <h2>Current Legislation</h2>
+                        <p>Bills that matter to you based on your circumstances and views</p>
+                    </div>
+                    
+                    <div class="legislation-content">
+                        <div class="bill-card">
+                            <div class="bill-header">
+                                <h3>H.R. 1234 - Healthcare Affordability Act</h3>
+                                <span class="bill-status pending">Pending Vote</span>
+                            </div>
+                            <div class="bill-description">
+                                <p>This bill aims to lower prescription drug costs and expand healthcare coverage. Given your support for universal healthcare and concern about healthcare costs, this legislation directly addresses your priorities.</p>
+                            </div>
+                            <div class="bill-details">
+                                <div class="bill-detail">
+                                    <strong>Sponsor:</strong> Rep. Smith (D-CA)
+                                </div>
+                                <div class="bill-detail">
+                                    <strong>Your Representatives' Position:</strong> 
+                                    <span class="position supporting">Supporting</span>
+                                </div>
+                                <div class="bill-detail">
+                                    <strong>Impact on You:</strong> Could reduce your healthcare costs by 15-20%
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bill-card">
+                            <div class="bill-header">
+                                <h3>S.B. 567 - Small Business Tax Relief</h3>
+                                <span class="bill-status pending">Pending Vote</span>
+                            </div>
+                            <div class="bill-description">
+                                <p>This legislation provides tax breaks for small businesses and their employees. Since you work for a small business, this could directly benefit your financial situation.</p>
+                            </div>
+                            <div class="bill-details">
+                                <div class="bill-detail">
+                                    <strong>Sponsor:</strong> Sen. Johnson (R-TX)
+                                </div>
+                                <div class="bill-detail">
+                                    <strong>Your Representatives' Position:</strong> 
+                                    <span class="position undecided">Undecided</span>
+                                </div>
+                                <div class="bill-detail">
+                                    <strong>Impact on You:</strong> Potential $500-1000 annual tax savings
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bill-card">
+                            <div class="bill-header">
+                                <h3>H.R. 890 - Environmental Protection Act</h3>
+                                <span class="bill-status pending">Pending Vote</span>
+                            </div>
+                            <div class="bill-description">
+                                <p>This bill strengthens environmental regulations and invests in renewable energy. Your strong support for environmental protection aligns with this legislation's goals.</p>
+                            </div>
+                            <div class="bill-details">
+                                <div class="bill-detail">
+                                    <strong>Sponsor:</strong> Rep. Davis (D-OR)
+                                </div>
+                                <div class="bill-detail">
+                                    <strong>Your Representatives' Position:</strong> 
+                                    <span class="position supporting">Supporting</span>
+                                </div>
+                                <div class="bill-detail">
+                                    <strong>Impact on You:</strong> Improved air quality and long-term environmental benefits
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Representatives -->
+            <div class="representatives-sidebar">
+                <h2 class="sidebar-title">Your Representatives</h2>
+                
+                <!-- Local Level -->
+                <div class="representative-card local">
+                    <div class="card-header">
+                        <span class="level-badge local">Local</span>
+                        <h3>Mayor</h3>
+                    </div>
+                    <div class="representative-info">
+                        <div class="avatar">👤</div>
+                        <div class="details">
+                            <h4 id="mayorName">Loading...</h4>
+                            <p id="mayorParty">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <p><strong>Contact:</strong> <span id="mayorContact">Loading...</span></p>
+                    </div>
+                </div>
+
+                <div class="representative-card local">
+                    <div class="card-header">
+                        <span class="level-badge local">Local</span>
+                        <h3>City Council</h3>
+                    </div>
+                    <div class="representative-info">
+                        <div class="avatar">👥</div>
+                        <div class="details">
+                            <h4 id="councilName">Loading...</h4>
+                            <p id="councilParty">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <p><strong>Contact:</strong> <span id="councilContact">Loading...</span></p>
+                    </div>
+                </div>
+
+                <!-- State Level -->
+                <div class="representative-card state">
+                    <div class="card-header">
+                        <span class="level-badge state">State</span>
+                        <h3>State Representative</h3>
+                    </div>
+                    <div class="representative-info">
+                        <div class="avatar">🏛️</div>
+                        <div class="details">
+                            <h4 id="stateRepName">Loading...</h4>
+                            <p id="stateRepParty">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <p><strong>Contact:</strong> <span id="stateRepContact">Loading...</span></p>
+                    </div>
+                </div>
+
+                <div class="representative-card state">
+                    <div class="card-header">
+                        <span class="level-badge state">State</span>
+                        <h3>State Senator</h3>
+                    </div>
+                    <div class="representative-info">
+                        <div class="avatar">🏛️</div>
+                        <div class="details">
+                            <h4 id="stateSenName">Loading...</h4>
+                            <p id="stateSenParty">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <p><strong>Contact:</strong> <span id="stateSenContact">Loading...</span></p>
+                    </div>
+                </div>
+
+                <!-- Federal Level -->
+                <div class="representative-card federal">
+                    <div class="card-header">
+                        <span class="level-badge federal">Federal</span>
+                        <h3>U.S. Representative</h3>
+                    </div>
+                    <div class="representative-info">
+                        <div class="avatar">🏛️</div>
+                        <div class="details">
+                            <h4 id="usRepName">Loading...</h4>
+                            <p id="usRepParty">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <p><strong>Contact:</strong> <span id="usRepContact">Loading...</span></p>
+                    </div>
+                </div>
+
+                <div class="representative-card federal">
+                    <div class="card-header">
+                        <span class="level-badge federal">Federal</span>
+                        <h3>U.S. Senator</h3>
+                    </div>
+                    <div class="representative-info">
+                        <div class="avatar">🏛️</div>
+                        <div class="details">
+                            <h4 id="usSenName">Loading...</h4>
+                            <p id="usSenParty">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <p><strong>Contact:</strong> <span id="usSenContact">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn-secondary" onclick="window.location.href='survey.html'">Update My Preferences</button>
+            <button class="btn-primary" onclick="window.location.href='index.html'">Start Over</button>
+        </div>
+    </div>
+
+    <script src="results.js"></script>
+</body>
+</html> 

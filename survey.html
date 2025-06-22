@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Political Views Survey - BallotBuddy</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/survey.css">
+</head>
+<body>
+    <div class="survey-container">
+        <div class="survey-header">
+            <h1>Political Views Survey</h1>
+            <p>Help us understand your political preferences to provide personalized guidance</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="survey-content" id="surveyContent">
+            <!-- Political Views Questions -->
+            <div class="question-section" id="politicalViews">
+                <h2>Political Views</h2>
+                <p>Rate your level of agreement with each statement:</p>
+                
+                <div class="question-group">
+                    <div class="question">
+                        <label>Government should provide universal healthcare coverage for all Americans</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="healthcare">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>The federal government should significantly increase spending on social programs like food assistance, housing aid, and unemployment benefits</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="socialPrograms">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>Stricter gun control laws, including universal background checks and assault weapon restrictions, would make America safer</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="gunControl">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>Climate change requires immediate government action, including regulations on businesses and significant investment in renewable energy</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="climateChange">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>Immigration levels should be significantly reduced, and border security should be the top priority in immigration policy</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="immigration">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>Wealthy individuals and large corporations should pay substantially higher tax rates to fund government programs</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="taxes">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>Traditional Christian values should play a central role in shaping government policies and laws</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="christianValues">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>Systemic racism remains a major problem in America that requires active government intervention to address</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="systemicRacism">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>The United States should take a more isolationist approach, reducing military involvement overseas and focusing on domestic priorities</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="isolationism">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <label>Transgender individuals should have the legal right to use facilities and participate in activities that align with their gender identity</label>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="slider" id="transgenderRights">
+                            <div class="slider-labels">
+                                <span>Strongly Disagree</span>
+                                <span>Strongly Agree</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="btn-secondary" onclick="window.location.href='index.html'">Back</button>
+                    <button class="btn-primary" onclick="nextSection()">Next: Circumstances</button>
+                </div>
+            </div>
+
+            <!-- Circumstances Questions -->
+            <div class="question-section hidden" id="circumstances">
+                <h2>Personal Circumstances</h2>
+                <p>Tell us about your current situation:</p>
+                
+                <div class="question-group">
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="lowIncome">
+                            <span class="checkmark"></span>
+                            I make less than $75,000 per year in household income.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="student">
+                            <span class="checkmark"></span>
+                            I am currently a student (high school, college, or graduate school).
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="subsidizedHousing">
+                            <span class="checkmark"></span>
+                            I live in government-subsidized housing or receive housing assistance.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="governmentBenefits">
+                            <span class="checkmark"></span>
+                            I receive government benefits like SNAP (food stamps), Medicaid, or unemployment insurance.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="homeowner">
+                            <span class="checkmark"></span>
+                            I own my home (or am paying a mortgage on it).
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="urbanArea">
+                            <span class="checkmark"></span>
+                            I live in a city or suburban area with a population over 50,000.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="studentLoans">
+                            <span class="checkmark"></span>
+                            I am currently paying off student loans.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="collegeDegreeJob">
+                            <span class="checkmark"></span>
+                            I work in a job that requires a college degree.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="investments">
+                            <span class="checkmark"></span>
+                            I own stocks, bonds, or other investments worth more than $10,000.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="unionMember">
+                            <span class="checkmark"></span>
+                            I am a member of a labor union.
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="religiousServices">
+                            <span class="checkmark"></span>
+                            I regularly attend religious services (at least monthly).
+                        </label>
+                    </div>
+
+                    <div class="question checkbox-question">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="married">
+                            <span class="checkmark"></span>
+                            I am married or in a long-term committed relationship.
+                        </label>
+                    </div>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="btn-secondary" onclick="prevSection()">Back</button>
+                    <button class="btn-primary" onclick="nextSection()">Next: Personal Details</button>
+                </div>
+            </div>
+
+            <!-- Personal Details -->
+            <div class="question-section hidden" id="personalDetails">
+                <h2>Additional Information</h2>
+                <p>Tell us what's important to you politically and any other relevant details:</p>
+                
+                <div class="question-group">
+                    <div class="question">
+                        <label for="personalDetails">What issues are most important to you?</label>
+                        <textarea 
+                            id="personalDetailsText" 
+                            placeholder="For example: I'm concerned about climate change, healthcare costs, education funding, etc. Tell us what matters most to you and your community..."
+                            rows="6"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="btn-secondary" onclick="prevSection()">Back</button>
+                    <button class="btn-primary" onclick="submitSurvey()">Get My Results</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="survey.js"></script>
+</body>
+</html> 
