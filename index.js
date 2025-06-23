@@ -202,3 +202,6 @@ locationInput.addEventListener('blur', function() {
 });
 
 loadGoogleMapsScript();
+
+// Scroll to top on load
+window.scrollTo(0, 0);

@@ -1,5 +1,5 @@
 // Results Page JavaScript
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     loadUserData();
     loadRepresentatives();
     generatePersonalizedContent();
@@ -19,13 +19,257 @@ function loadUserData() {
     }
 }
 
-// Load representative data (mock data for now)
-function loadRepresentatives() {
-    // In a real application, this would fetch data from APIs like:
-    // - Google Civic Information API
-    // - OpenStates API
-    // - Local government APIs
+// Load representative data using Google Civic Information API
+async function loadRepresentatives() {
+    console.log('--- Debugging Representative Loading ---');
+    const userAddress = localStorage.getItem('userAddress');
     
+    if (!userAddress) {
+        console.error('No user address found in localStorage.');
+        showError('No address found. Please go back and enter your address.');
+        return;
+    }
+    console.log(`Found address: ${userAddress}`);
+
+    showLoadingState();
+    
+    try {
+        console.log('Attempting to fetch representatives from server...');
+        const representatives = await fetchRepresentatives(userAddress);
+        console.log('Successfully fetched and parsed data from server:', representatives);
+        
+        const totalReps = representatives.local.length + representatives.state.length + representatives.federal.length;
+        console.log(`Total real representatives found: ${totalReps}`);
+        
+        if (totalReps === 0) {
+            console.log('No representatives found for this address. This could be due to:');
+            console.log('1. The address not being recognized by the Google Civic API');
+            console.log('2. No representatives being assigned to this address');
+            console.log('3. The API not having data for this location');
+            showUserMessage('No representatives found for your address. This could be because the address is not recognized or there are no representatives assigned to this location. Showing sample data instead.', 'info');
+            loadMockRepresentatives();
+        } else {
+            console.log(`Found ${totalReps} real representatives. Calling populateRepresentativeCards() to display them.`);
+            populateRepresentativeCards(representatives);
+            console.log('✅ Successfully loaded and displayed real representative data.');
+        }
+    } catch (error) {
+        console.error('An error occurred in loadRepresentatives catch block:', error);
+        
+        // Provide more specific error messages
+        if (error.message.includes('API server is not running')) {
+            showUserMessage('The API server is not running. Please start the server with: npm start', 'error');
+        } else if (error.message.includes('API request failed')) {
+            showUserMessage('Could not connect to the representative database. Please check your internet connection and try again.', 'warning');
+        } else {
+            showUserMessage('Could not load representative data due to an error. Showing sample data instead.', 'warning');
+        }
+        loadMockRepresentatives();
+    } finally {
+        console.log('Finished loading process. Hiding loading state.');
+        hideLoadingState();
+    }
+}
+
+// Fetch representatives from Google Civic Information API via our server proxy
+async function fetchRepresentatives(address) {
+    // Use our local server proxy to avoid CORS issues
+    const baseUrl = 'http://localhost:3000/api/representatives';
+    const params = new URLSearchParams({
+        key: GOOGLE_API_KEY,
+        address: address
+    });
+
+    console.log('Fetching representatives for address:', address);
+    console.log('API URL:', `${baseUrl}?${params}`);
+    
+    try {
+        const response = await fetch(`${baseUrl}?${params}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log('API Response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('API Error response:', errorText);
+            throw new Error(`API request failed: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('API Response data:', data);
+        return parseRepresentativesData(data);
+    } catch (error) {
+        console.error('Network error:', error);
+        
+        // Check if server is not running
+        if (error.message.includes('Failed to fetch') || error.message.includes('ECONNREFUSED')) {
+            throw new Error('API server is not running. Please start the server with: npm start');
+        }
+        
+        throw error;
+    }
+}
+
+// Parse the API response and organize representatives by level
+function parseRepresentativesData(data) {
+    console.log('Parsing API response data:', data);
+    console.log('Offices found:', data.offices ? data.offices.length : 0);
+    console.log('Officials found:', data.officials ? data.officials.length : 0);
+    
+    const representatives = {
+        local: [],
+        state: [],
+        federal: []
+    };
+
+    if (data.offices && data.officials) {
+        console.log('Processing offices and officials...');
+        data.offices.forEach((office, officeIndex) => {
+            console.log(`Processing office ${officeIndex}:`, office.name);
+            office.officialIndices.forEach(index => {
+                const official = data.officials[index];
+                console.log(`Processing official ${index}:`, official.name);
+                const representative = {
+                    name: official.name,
+                    party: official.party || 'Unknown',
+                    office: office.name,
+                    level: getOfficeLevelFromOffice(office),
+                    contact: formatContactInfo(official),
+                    photoUrl: official.photoUrl,
+                    urls: official.urls || [],
+                    phones: official.phones || [],
+                    emails: official.emails || []
+                };
+                console.log(`Categorized as ${representative.level}:`, representative.name);
+                // Categorize by level
+                if (representative.level === 'local') {
+                    representatives.local.push(representative);
+                } else if (representative.level === 'state') {
+                    representatives.state.push(representative);
+                } else if (representative.level === 'federal') {
+                    representatives.federal.push(representative);
+                }
+            });
+        });
+    } else {
+        console.log('No offices or officials found in API response');
+    }
+    
+    console.log('Final parsed representatives:', representatives);
+    return representatives;
+}
+
+// Helper to determine level from office object
+function getOfficeLevelFromOffice(office) {
+    // Try to use the levels array if present
+    if (office.levels && office.levels.length > 0) {
+        const level = office.levels[0].toLowerCase();
+        if (level.includes('country') || level.includes('federal')) return 'federal';
+        if (level.includes('state')) return 'state';
+        if (level.includes('local') || level.includes('city') || level.includes('county') || level.includes('municipal')) return 'local';
+    }
+    // Fallback: use office name
+    const name = office.name.toLowerCase();
+    if (name.includes('president') || name.includes('senate') || name.includes('congress') || name.includes('federal')) return 'federal';
+    if (name.includes('state')) return 'state';
+    if (name.includes('mayor') || name.includes('council') || name.includes('city') || name.includes('local') || name.includes('county')) return 'local';
+    return 'local'; // Default to local if unsure
+}
+
+// Format contact information for display
+function formatContactInfo(official) {
+    let contact = '';
+    
+    if (official.phones && official.phones.length > 0) {
+        contact += official.phones[0];
+    }
+    
+    if (official.emails && official.emails.length > 0) {
+        if (contact) contact += ' | ';
+        contact += official.emails[0];
+    }
+    
+    if (official.urls && official.urls.length > 0) {
+        if (contact) contact += ' | ';
+        contact += official.urls[0];
+    }
+    
+    return contact || 'Contact information not available';
+}
+
+// Populate representative cards with real data
+function populateRepresentativeCards(representatives) {
+    console.log('Populating representative cards with data:', representatives);
+
+    const cardSelectors = {
+        mayor: { name: 'mayorName', party: 'mayorParty', contact: 'mayorContact', card: 'mayorCard' },
+        council: { name: 'councilName', party: 'councilParty', contact: 'councilContact', card: 'councilCard' },
+        stateRep: { name: 'stateRepName', party: 'stateRepParty', contact: 'stateRepContact', card: 'stateRepCard' },
+        stateSen: { name: 'stateSenName', party: 'stateSenParty', contact: 'stateSenContact', card: 'stateSenCard' },
+        usRep: { name: 'usRepName', party: 'usRepParty', contact: 'usRepContact', card: 'usRepCard' },
+        usSen: { name: 'usSenName', party: 'usSenParty', contact: 'usSenContact', card: 'usSenCard' }
+    };
+
+    // Helper to update a card
+    const updateCard = (selectors, rep) => {
+        if (document.getElementById(selectors.name)) {
+            document.getElementById(selectors.name).textContent = rep.name;
+            document.getElementById(selectors.party).textContent = rep.party;
+            document.getElementById(selectors.contact).textContent = rep.contact;
+        }
+    };
+    
+    // Clear all cards initially
+    for (const key in cardSelectors) {
+        const selectors = cardSelectors[key];
+        if (document.getElementById(selectors.name)) {
+            document.getElementById(selectors.name).textContent = 'Not found';
+            document.getElementById(selectors.party).textContent = 'N/A';
+            document.getElementById(selectors.contact).textContent = 'N/A';
+        }
+    }
+
+    // Populate local
+    if (representatives.local.length > 0) {
+        const mayor = representatives.local.find(r => r.office.toLowerCase().includes('mayor'));
+        if (mayor) updateCard(cardSelectors.mayor, mayor);
+
+        const council = representatives.local.find(r => r.office.toLowerCase().includes('council'));
+        if (council) updateCard(cardSelectors.council, council);
+    }
+    
+    // Populate state
+    if (representatives.state.length > 0) {
+        const stateReps = representatives.state.filter(r => r.office.toLowerCase().includes('representative'));
+        if (stateReps.length > 0) updateCard(cardSelectors.stateRep, stateReps[0]);
+        
+        const stateSens = representatives.state.filter(r => r.office.toLowerCase().includes('senator'));
+        if (stateSens.length > 0) updateCard(cardSelectors.stateSen, stateSens[0]);
+    }
+    
+    // Populate federal
+    if (representatives.federal.length > 0) {
+        const usReps = representatives.federal.filter(r => r.office.toLowerCase().includes('representative'));
+        if (usReps.length > 0) updateCard(cardSelectors.usRep, usReps[0]);
+        
+        const usSens = representatives.federal.filter(r => r.office.toLowerCase().includes('senator'));
+        if (usSens.length > 0) {
+            const senatorsText = usSens.map(s => `${s.name} (${s.party})`).join(', ');
+            document.getElementById(cardSelectors.usSen.name).textContent = senatorsText;
+            document.getElementById(cardSelectors.usSen.party).textContent = 'Multiple Senators';
+            document.getElementById(cardSelectors.usSen.contact).textContent = 'See individual contact info';
+        }
+    }
+}
+
+// Fallback to mock data if API fails
+function loadMockRepresentatives() {
+    console.log('Executing loadMockRepresentatives() to display sample data.');
     const mockRepresentatives = {
         mayor: {
             name: "Mayor Sarah Williams",
@@ -59,7 +303,6 @@ function loadRepresentatives() {
         }
     };
     
-    // Populate representative cards
     document.getElementById('mayorName').textContent = mockRepresentatives.mayor.name;
     document.getElementById('mayorParty').textContent = mockRepresentatives.mayor.party;
     document.getElementById('mayorContact').textContent = mockRepresentatives.mayor.contact;
@@ -83,6 +326,52 @@ function loadRepresentatives() {
     document.getElementById('usSenName').textContent = mockRepresentatives.usSen.name;
     document.getElementById('usSenParty').textContent = mockRepresentatives.usSen.party;
     document.getElementById('usSenContact').textContent = mockRepresentatives.usSen.contact;
+}
+
+// Show error message
+function showError(message) {
+    console.error(message);
+    // You could add a more user-friendly error display here
+}
+
+// Show user-friendly message
+function showUserMessage(message, type = 'info') {
+    // Create a temporary message element
+    const messageDiv = document.createElement('div');
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 10000;
+        max-width: 300px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    // Set background color based on message type
+    if (type === 'info') {
+        messageDiv.style.backgroundColor = '#2196F3';
+    } else if (type === 'warning') {
+        messageDiv.style.backgroundColor = '#FF9800';
+    } else if (type === 'error') {
+        messageDiv.style.backgroundColor = '#F44336';
+    } else {
+        messageDiv.style.backgroundColor = '#4CAF50';
+    }
+    
+    messageDiv.textContent = message;
+    document.body.appendChild(messageDiv);
+    
+    // Remove message after 5 seconds
+    setTimeout(() => {
+        if (messageDiv.parentNode) {
+            messageDiv.parentNode.removeChild(messageDiv);
+        }
+    }, 5000);
 }
 
 // Generate personalized content based on user survey data

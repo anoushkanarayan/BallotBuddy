@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - BallotBuddy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Civic Information API Test</h1>
+    
+    <div class="test-section">
+        <h3>Test Address</h3>
+        <input type="text" id="testAddress" placeholder="Enter an address to test" value="1600 Pennsylvania Avenue NW, Washington, DC 20500" style="width: 100%; padding: 10px; margin: 10px 0;">
+        <button onclick="testAPI()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">Test API</button>
+    </div>
+    
+    <div class="test-section" id="resultSection" style="display: none;">
+        <h3>API Result</h3>
+        <div id="resultContent"></div>
+    </div>
+
+    <script src="my_api_keys.js"></script>
+    <script>
+        async function testAPI() {
+            const address = document.getElementById('testAddress').value;
+            const resultSection = document.getElementById('resultSection');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultSection.style.display = 'block';
+            resultContent.innerHTML = '<p>Testing API...</p>';
+            
+            try {
+                // Test with a simple GET request first (this works from browser)
+                const testUrl = `https://www.googleapis.com/civicinfo/v2/elections?key=${GOOGLE_API_KEY}`;
+                console.log('Testing simple elections endpoint:', testUrl);
+                
+                const response = await fetch(testUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultContent.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Basic API Test Successful!</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Elections found:</strong> ${data.elections ? data.elections.length : 0}</p>
+                            <p><strong>API Key:</strong> Working ✅</p>
+                            <details>
+                                <summary>Elections Response</summary>
+                                <pre>${JSON.stringify(data, null, 2)}</pre>
+                            </details>
+                        </div>
+                    `;
+                    
+                    // Now try the representatives endpoint using our server proxy
+                    setTimeout(async () => {
+                        try {
+                            // First test our server's test endpoint
+                            const testCivicUrl = `http://localhost:3000/api/test-civic?key=${GOOGLE_API_KEY}`;
+                            console.log('Testing server civic endpoint:', testCivicUrl);
+                            
+                            const testCivicResponse = await fetch(testCivicUrl);
+                            const testCivicData = await testCivicResponse.json();
+                            
+                            if (testCivicResponse.ok) {
+                                resultContent.innerHTML += `
+                                    <div class="success" style="margin-top: 20px;">
+                                        <h4>✅ Server Civic API Test Successful!</h4>
+                                        <p><strong>Status:</strong> ${testCivicResponse.status}</p>
+                                        <p><strong>Message:</strong> ${testCivicData.message}</p>
+                                        <p><strong>Elections found:</strong> ${testCivicData.elections}</p>
+                                    </div>
+                                `;
+                            } else {
+                                resultContent.innerHTML += `
+                                    <div class="error" style="margin-top: 20px;">
+                                        <h4>❌ Server Civic API Test Failed</h4>
+                                        <p><strong>Status:</strong> ${testCivicResponse.status}</p>
+                                        <p><strong>Error:</strong> ${JSON.stringify(testCivicData)}</p>
+                                    </div>
+                                `;
+                                return; // Don't continue if basic test fails
+                            }
+                            
+                            // Now try the representatives endpoint using our server proxy
+                            const proxyUrl = `http://localhost:3000/api/representatives?key=${GOOGLE_API_KEY}&address=${encodeURIComponent(address)}`;
+                            console.log('Testing representatives endpoint via proxy:', proxyUrl);
+                            
+                            // Also test direct API call to see what the actual error is
+                            const directUrl = `https://www.googleapis.com/civicinfo/v2/representatives?key=${GOOGLE_API_KEY}&address=${encodeURIComponent(address)}`;
+                            console.log('Testing direct API call:', directUrl);
+                            
+                            try {
+                                const directResponse = await fetch(directUrl);
+                                const directData = await directResponse.text();
+                                console.log('Direct API response status:', directResponse.status);
+                                console.log('Direct API response:', directData.substring(0, 200) + '...');
+                            } catch (directError) {
+                                console.log('Direct API error:', directError.message);
+                            }
+                            
+                            const repResponse = await fetch(proxyUrl, {
+                                method: 'GET',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+                            
+                            if (repResponse.ok) {
+                                const repData = await repResponse.json();
+                                resultContent.innerHTML += `
+                                    <div class="success" style="margin-top: 20px;">
+                                        <h4>✅ Representatives API Working via Server Proxy!</h4>
+                                        <p><strong>Status:</strong> ${repResponse.status}</p>
+                                        <p><strong>Offices found:</strong> ${repData.offices ? repData.offices.length : 0}</p>
+                                        <p><strong>Officials found:</strong> ${repData.officials ? repData.officials.length : 0}</p>
+                                        <details>
+                                            <summary>Representatives Response</summary>
+                                            <pre>${JSON.stringify(repData, null, 2)}</pre>
+                                        </details>
+                                    </div>
+                                `;
+                            } else {
+                                const errorData = await repResponse.json();
+                                resultContent.innerHTML += `
+                                    <div class="error" style="margin-top: 20px;">
+                                        <h4>❌ Representatives API Failed</h4>
+                                        <p><strong>Status:</strong> ${repResponse.status}</p>
+                                        <p><strong>Error:</strong> ${JSON.stringify(errorData)}</p>
+                                    </div>
+                                `;
+                            }
+                        } catch (repError) {
+                            resultContent.innerHTML += `
+                                <div class="error" style="margin-top: 20px;">
+                                    <h4>❌ Representatives API Network Error</h4>
+                                    <p><strong>Error:</strong> ${repError.message}</p>
+                                    <p>This might be a server issue. Make sure your server is running on localhost:3000</p>
+                                    <p><strong>Try:</strong></p>
+                                    <ul>
+                                        <li>Check if server is running: <a href="http://localhost:3000/api/health" target="_blank">Health Check</a></li>
+                                        <li>Restart the server with: npm start</li>
+                                        <li>Check server console for error messages</li>
+                                    </ul>
+                                </div>
+                            `;
+                        }
+                    }, 1000);
+                } else {
+                    const errorData = await response.text();
+                    resultContent.innerHTML = `
+                        <div class="error">
+                            <h4>❌ API Test Failed</h4>
+                            <p><strong>Status:</strong> ${response.status}</p>
+                            <p><strong>Error:</strong> ${errorData}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultContent.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Network Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Possible causes:</strong></p>
+                        <ul>
+                            <li>CORS (Cross-Origin Resource Sharing) issue</li>
+                            <li>Network connectivity problem</li>
+                            <li>API key restrictions</li>
+                            <li>Firewall blocking the request</li>
+                        </ul>
+                        <p><strong>Try:</strong></p>
+                        <ul>
+                            <li>Check your internet connection</li>
+                            <li>Verify API key restrictions in Google Cloud Console</li>
+                            <li>Try accessing the API directly in browser: <a href="https://www.googleapis.com/civicinfo/v2/elections?key=${GOOGLE_API_KEY}" target="_blank">Test Elections</a></li>
+                            <li>Check server health: <a href="http://localhost:3000/api/health" target="_blank">Server Health</a></li>
+                        </ul>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html> 

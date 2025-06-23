@@ -6,6 +6,34 @@ const sections = ['politicalViews', 'circumstances', 'personalDetails'];
 document.addEventListener('DOMContentLoaded', function() {
     initializeSliders();
     updateProgress();
+    
+    const draftData = localStorage.getItem('surveyDataDraft');
+    if (draftData) {
+        const data = JSON.parse(draftData);
+        
+        // Restore slider values
+        Object.keys(data.politicalViews).forEach(sliderId => {
+            const slider = document.getElementById(sliderId);
+            if (slider) {
+                slider.value = data.politicalViews[sliderId];
+                updateSliderValue(slider);
+            }
+        });
+        
+        // Restore checkbox values
+        Object.keys(data.circumstances).forEach(checkboxId => {
+            const checkbox = document.getElementById(checkboxId);
+            if (checkbox) {
+                checkbox.checked = data.circumstances[checkboxId];
+            }
+        });
+        
+        // Restore textarea value
+        const personalDetailsText = document.getElementById('personalDetailsText');
+        if (personalDetailsText) {
+            personalDetailsText.value = data.personalDetails;
+        }
+    }
 });
 
 // Initialize slider functionality
@@ -222,35 +250,4 @@ function autoSave() {
 }
 
 // Auto-save every 30 seconds
-setInterval(autoSave, 30000);
-
-// Load draft data if available
-document.addEventListener('DOMContentLoaded', function() {
-    const draftData = localStorage.getItem('surveyDataDraft');
-    if (draftData) {
-        const data = JSON.parse(draftData);
-        
-        // Restore slider values
-        Object.keys(data.politicalViews).forEach(sliderId => {
-            const slider = document.getElementById(sliderId);
-            if (slider) {
-                slider.value = data.politicalViews[sliderId];
-                updateSliderValue(slider);
-            }
-        });
-        
-        // Restore checkbox values
-        Object.keys(data.circumstances).forEach(checkboxId => {
-            const checkbox = document.getElementById(checkboxId);
-            if (checkbox) {
-                checkbox.checked = data.circumstances[checkboxId];
-            }
-        });
-        
-        // Restore textarea value
-        const textarea = document.getElementById('personalDetailsText');
-        if (textarea && data.personalDetails) {
-            textarea.value = data.personalDetails;
-        }
-    }
-}); 
+setInterval(autoSave, 30000); 
